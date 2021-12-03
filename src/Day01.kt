@@ -14,7 +14,7 @@ fun main() {
          * measurement. (There is no measurement before the first measurement.)
          */
         var increasedCount = 0
-        var previousDepth : Int? = null
+        var previousDepth: Int? = null
 
         for (i in input) {
             val currentDepth = i.toInt()
