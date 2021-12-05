@@ -38,6 +38,23 @@ fun main() {
 
         var twoOrMoreOverlaps = 0
 
+        fun markGrid(startX: Int, startY:Int, xFactor: Int, yFactor: Int, lineLength: Int) {
+            /**
+             * Mark lines on a grid and keep track of overlaps.
+             */
+            var x = startX
+            var y = startY
+            for (i in 1 .. lineLength) {
+                grid[x][y] += 1
+                if (grid[x][y] == 2) {
+                    // Two lines covering this point
+                    twoOrMoreOverlaps += 1
+                }
+                x += 1 * xFactor
+                y += 1 * yFactor
+            }
+        }
+
         for (segment in lineSegments) {
             val start = segment.first
             val end = segment.second
@@ -47,26 +64,14 @@ fun main() {
                 // Mark points in grid
                 val minY = min(start[1], end[1])
                 val maxY = max(start[1], end[1])
-                for (y in minY .. maxY) {
-                    grid[start[0]][y] += 1
+                markGrid(start[0], minY, 0, 1, maxY - minY + 1)
 
-                    if (grid[start[0]][y] == 2) {
-                        // Two lines covering this point
-                        twoOrMoreOverlaps += 1
-                    }
-                }
             } else if (start[1] == end[1]) {
                 // y coordinates match, mark in grid
                 val minX = min(start[0], end[0])
                 val maxX = max(start[0], end[0])
-                for (x in minX .. maxX) {
-                    grid[x][start[1]] += 1
+                markGrid(minX, start[1], 1, 0, maxX - minX + 1)
 
-                    if (grid[x][start[1]] == 2) {
-                        // Two lines covering this point
-                        twoOrMoreOverlaps += 1
-                    }
-                }
             } else if (diagonal) {
                 val xDiff = end[0] - start[0]
                 val yDiff = end[1] - start[1]
@@ -77,6 +82,7 @@ fun main() {
                 }
 
                 val yCoefficient: Int
+                val x = min(start[0], end[0])
                 var y: Int
 
                 if (xDiff.sign == yDiff.sign) {
@@ -89,17 +95,7 @@ fun main() {
                     y = max(start[1], end[1])
                 }
 
-                val minX = min(start[0], end[0])
-                val maxX = max(start[0], end[0])
-                for (x in minX .. maxX) {
-                    grid[x][y] += 1
-
-                    if (grid[x][y] == 2) {
-                        // Two lines covering this point
-                        twoOrMoreOverlaps += 1
-                    }
-                    y += 1 * yCoefficient
-                }
+                markGrid(x, y, 1, yCoefficient, abs(xDiff) + 1)
             }
         }
 
