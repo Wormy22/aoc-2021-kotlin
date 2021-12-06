@@ -7,24 +7,17 @@ fun main() {
         /**
          * Calculate how many lanternfish there would be after a specified number of days.
          */
-        val fishIntervals = input.first().split(",")
+        val fishIntervals = input.first().split(",").map{ it.toInt() }
+
         // Create an array to keep track of how many lanternfish there are for each internal timer
-        var lanternfish: Array<Long> = arrayOf(
-            fishIntervals.count {it == "0"}.toLong(),
-            fishIntervals.count {it == "1"}.toLong(),
-            fishIntervals.count {it == "2"}.toLong(),
-            fishIntervals.count {it == "3"}.toLong(),
-            fishIntervals.count {it == "4"}.toLong(),
-            fishIntervals.count {it == "5"}.toLong(),
-            fishIntervals.count {it == "6"}.toLong(),
-            fishIntervals.count {it == "7"}.toLong(),
-            fishIntervals.count {it == "8"}.toLong())
+        var lanternfish = LongArray(9)
+        fishIntervals.forEach { lanternfish[it]++ }
 
         // Simulate each day
         for (i in 1 .. days) {
             val zeroCount: Long = lanternfish.first()
 
-            // Reduce timer of all fish
+            // Reduce timer of all fish by reducing index by 1
             lanternfish = lanternfish.copyOfRange(1, 8 + 1)
 
             // Fish with a timer of zero get reset to six, and result in a new fish with a timer of eight
