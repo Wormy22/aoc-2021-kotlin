@@ -15,7 +15,7 @@ fun main() {
          * Check if a line is valid i.e. if every opening character has a matching closing character in the correct
          * order
          */
-        var closingStack = CharArray(0)
+        val closingStack = ArrayList<Char>()
 
         for (char in line) {
             if (openToClose.containsKey(char)) {
@@ -25,7 +25,7 @@ fun main() {
                 // Closing character - check it is expected
                 if (char == closingStack.last()) {
                     // Remove from stack
-                    closingStack = closingStack.dropLast(1).toCharArray()
+                    closingStack.removeLast()
                 } else {
                     // Error - return illegal character
                     return Pair(char, null)
