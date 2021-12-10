@@ -9,6 +9,35 @@ val openToClose: Map<Char, Char> = mapOf('(' to ')',
 )
 
 fun main() {
+
+    fun checkLine(line: String): Pair<Char?, List<Char>?> {
+        /**
+         * Check if a line is valid i.e. if every opening character has a matching closing character in the correct
+         * order
+         */
+        var closingStack: Array<Char> = emptyArray()
+
+        for (char in line) {
+            if (openToClose.containsKey(char)) {
+                // Opening character - add corresponding closing to stack
+                closingStack += openToClose[char]!!
+            } else {
+                // Closing character - check it is expected
+                if (char == closingStack.last()) {
+                    // Remove from stack
+                    closingStack = closingStack.sliceArray(0 until closingStack.lastIndex)
+                } else {
+                    // Error - return illegal character
+                    return Pair(char, null)
+                }
+            }
+        }
+
+        // Line is valid but incomplete - return list of closing characters in order they need to be added
+        return Pair(null, closingStack.reversed())
+    }
+
+
     fun part1(input: List<String>): Int {
         /**
          * Find the first illegal character in each corrupted line of the navigation subsystem and return the
@@ -23,23 +52,10 @@ fun main() {
         var errorScore = 0
 
         for (line in input) {
-            var closingStack: Array<Char> = emptyArray()
+            val errorChar = checkLine(line).first
 
-            for (char in line) {
-                if (openToClose.containsKey(char)) {
-                    // Opening character - add corresponding closing to stack
-                    closingStack += openToClose[char]!!
-                } else {
-                    // Closing character - check it is expected
-                    if (char == closingStack.last()) {
-                        // Remove from stack
-                        closingStack = closingStack.sliceArray(0 until closingStack.lastIndex)
-                    } else {
-                        // Error - add score and move onto next line
-                        errorScore += illegalPoints[char]!!
-                        break
-                    }
-                }
+            if (errorChar != null) {
+                errorScore += illegalPoints[errorChar]!!
             }
         }
         return errorScore
@@ -60,31 +76,13 @@ fun main() {
         var completionScores: Array<Long> = emptyArray()
 
         for (line in input) {
-            var lineDiscarded = false
-            var closingStack: Array<Char> = emptyArray()
+            val closingStack = checkLine(line).second
 
-            for (char in line) {
-                if (openToClose.containsKey(char)) {
-                    // Opening character - add corresponding closing to stack
-                    closingStack += openToClose[char]!!
-                } else {
-                    // Closing character - check it is expected
-                    if (char == closingStack.last()) {
-                        // Remove from stack
-                        closingStack = closingStack.sliceArray(0 until closingStack.lastIndex)
-                    } else {
-                        // Error - discard line and continue
-                        lineDiscarded = true
-                        break
-                    }
-                }
-            }
-
-            if (!lineDiscarded) {
+            if (closingStack != null) {
                 // Complete line and calculate score
                 var completionScore: Long = 0
 
-                for (char in closingStack.reversed()) {
+                for (char in closingStack) {
                     completionScore *= 5
                     completionScore += completionPoints[char]!!
                 }
