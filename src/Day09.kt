@@ -29,10 +29,10 @@ class Point(private val height: Int) {
          * Traverse neighbours to calculate basin size.
          */
         var basinSize = 1
+        basinVisited = true
 
         for (neighbour in neighbours) {
             if (!neighbour.basinVisited && neighbour.height != 9 && neighbour.height > height) {
-                neighbour.basinVisited = true
                 basinSize += neighbour.calculateBasinSize()
             }
         }
