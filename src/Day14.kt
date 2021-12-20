@@ -21,7 +21,8 @@ fun main() {
             } else if (line.index >= 2) {
                 // Pair insertion rule
                 val (pair, replacement) = line.value.split(" -> ")
-                insertionRules[pair] = replacement
+                // Map pair to pair with additional element in lower case to distinguish from original elements
+                insertionRules[pair] = pair[0] + replacement.lowercase() + pair[1]
             }
         }
 
@@ -32,22 +33,14 @@ fun main() {
         /**
          * Perform pair insertion on polymer
          */
-        var newPolymerTemplate = ""
+        var newPolymerTemplate = polymerTemplate
 
-        for (i in 0 until polymerTemplate.lastIndex) {
-            val firstChar = polymerTemplate[i]
-            val secondChar = polymerTemplate[i + 1]
-            val pair: String = firstChar.toString() + secondChar.toString()
-
-            if (insertionRules.contains(pair)) {
-                newPolymerTemplate += firstChar + insertionRules[pair]!!
-            }
+        // Replace each pair with additional lowercase element inserted
+        for ((pair, replacement) in insertionRules)  {
+            newPolymerTemplate = newPolymerTemplate.replace(pair, replacement)
         }
 
-        // Add final char
-        newPolymerTemplate += polymerTemplate.last()
-
-        return newPolymerTemplate
+        return newPolymerTemplate.uppercase()
     }
 
     fun pairInsertionLoop(input: List<String>, steps: Int): Long {
@@ -60,6 +53,7 @@ fun main() {
 
         // Perform pair insertion
         for (i in 1 .. steps) {
+            println(i)
             polymerTemplate = pairInsertion(polymerTemplate, insertionRules)
         }
 
